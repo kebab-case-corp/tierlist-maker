@@ -1,4 +1,5 @@
 import {ChangeEvent, useState} from "react"
+import styles from "@/app/components/RatingSlider/index.module.css"
 
 type RatingSliderProps = {
     name: string
@@ -17,7 +18,7 @@ function RatingSlider({name, setRating, index, rating}:RatingSliderProps) {
         setRating(newRating)
     } 
   return (
-    <div>
+    <div className={styles.div}>
         <label htmlFor={name}>{name}</label>
         <input type="range" min="0" max="5" value={value} className="slider" id={name} step={0.25} onChange={handleChange}/>
         <output htmlFor={name}>{value}</output>
