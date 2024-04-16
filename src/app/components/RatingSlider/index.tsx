@@ -5,14 +5,14 @@ type RatingSliderProps = {
     name: string
     setRating: Function
     index: number
-    rating: number[]
+    rating: {criteria:string, rate:number}[]
 }
 
 function RatingSlider({ name, setRating, index, rating }: RatingSliderProps) {
     const [value, setValue] = useState(0)
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newRating = [...rating]
-        newRating[index] = parseFloat(e.target.value)
+        newRating[index].rate = parseFloat(e.target.value)
         setValue(parseFloat(e.target.value))
         setRating(newRating)
     }

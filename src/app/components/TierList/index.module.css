@@ -1,0 +1,28 @@
+.tierlist {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid white;
+    margin-bottom: 30px;
+}
+
+.tier {
+    display: flex;
+    width: 700px;
+    min-height: 120px;
+    height: auto;
+    border: 2px solid white;
+}
+
+.tier__name {
+    text-align: center;
+    font-size: 25px;
+    border-right: 2px solid white;
+    width: 100px;
+    padding-top: 45px;
+}
+
+.img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
