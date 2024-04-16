@@ -1,4 +1,13 @@
-.div {
-    display:flex;
-    gap: 15px;
+.container {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.input {
+    cursor: pointer;
 }
