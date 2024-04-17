@@ -27,7 +27,7 @@ export const tierlists = [
                 ],
                 id: 'lprrm',
                 totalRating: 0,
-                tier: "D"
+                tier: 'D',
             },
             {
                 image: `https://static.wikia.nocookie.net/reborn/images/8/8d/Tsuna_2.PNG`,
@@ -39,7 +39,7 @@ export const tierlists = [
                 ],
                 id: 'lpm',
                 totalRating: 15,
-                tier: "D"
+                tier: 'D',
             },
         ],
         unratedItems: [
@@ -49,7 +49,7 @@ export const tierlists = [
             },
             {
                 image: `https://static.wikia.nocookie.net/reborn/images/d/dc/M_Rokudo.PNG`,
-                id: 'ddef'
+                id: 'ddef',
             },
         ],
     },

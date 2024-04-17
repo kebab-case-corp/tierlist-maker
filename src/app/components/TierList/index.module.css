@@ -1,24 +1,29 @@
 .tierlist {
-    display: flex;
-    flex-direction: column;
-    border: 2px solid white;
-    margin-bottom: 30px;
+    display: grid;
+    border: solid 1px white;
+    border-bottom: none;
 }
 
 .tier {
-    display: flex;
-    width: 700px;
-    min-height: 120px;
-    height: auto;
-    border: 2px solid white;
+    display: grid;
+    grid-template-columns: 150px minmax(20vw, 1fr);
+    border-bottom: solid 1px white;
+    height: 100%;
 }
 
-.tier__name {
-    text-align: center;
-    font-size: 25px;
-    border-right: 2px solid white;
-    width: 100px;
-    padding-top: 45px;
+.tier-name {
+    justify-self: center;
+    align-self: center;
+}
+
+.items-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgb(15 23 42);
+    border-left: solid 1px white;
+    min-height: 100px;
 }
 
 .img {
