@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { auth } from "../../../firebase-config";
 import TierlistsList from "../components/TierlistsList";
 import styles from "./index.module.css";
+import NewTierlistForm from "../components/NewTierlistForm";
 
 function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -30,6 +31,7 @@ function Page() {
         Disconnect
       </button>
       <TierlistsList userId={user.uid}></TierlistsList>
+      <NewTierlistForm></NewTierlistForm>
     </div>
   );
 }

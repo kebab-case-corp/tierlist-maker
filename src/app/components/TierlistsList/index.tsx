@@ -31,7 +31,6 @@ function TierlistsList({ userId }: TierlistsListProps) {
     };
     fetchTierLists();
   }, [userId]);
-  console.log(alltierlists);
   return (
     <div className={styles.tierlists}>
       {alltierlists?.map((tierlist) => (
