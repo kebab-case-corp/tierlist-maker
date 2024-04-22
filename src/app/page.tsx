@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter()
+  const router = useRouter();
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
@@ -20,32 +20,38 @@ export default function Home() {
     setPassword(e.target.value);
   };
   const handleFormSubmit = (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => router.push('/dashboard'))
+      .then((userCredential) => router.push("/dashboard"))
       .catch((error) => console.error(error));
   };
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleFormSubmit}>
-        <label htmlFor="email">Email: </label>
+    <div className={styles.wrapper}>
+      <h1 className={styles.title}>Login</h1>
+      <form className={styles.form} onSubmit={handleFormSubmit}>
+        <label htmlFor="email" className={styles.label}>
+          Email:{" "}
+        </label>
         <input
           type="text"
           id="email"
           required
           onChange={handleEmailChange}
           value={email}
+          className={styles.input}
         ></input>
-        <label htmlFor="pass">Password:</label>
+        <label htmlFor="pass" className={styles.label}>
+          Password:
+        </label>
         <input
           type="password"
           id="pass"
           required
           onChange={handlePasswordChange}
           value={password}
+          className={styles.input}
         ></input>
-        <input type="submit" value="Sign in" />
+        <input type="submit" value="Sign in" className={styles.submit} />
       </form>
     </div>
   );
