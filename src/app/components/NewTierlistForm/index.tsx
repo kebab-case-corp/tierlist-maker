@@ -73,30 +73,35 @@ function NewTierlistForm({}) {
     <div className={styles.container}>
       <h1 className={styles.title}>Nouvelle Tierlist</h1>
       <form className={styles.form}>
-        <label htmlFor="name">Nom:</label>
-        <input type="text" id="name" className={styles.input} required></input>
-        <label htmlFor="description">Description</label>
+        <label htmlFor="tierlist-name">Nom:</label>
+        <input
+          type="text"
+          id="tierlist-name--"
+          className={styles.input}
+          required
+        ></input>
+        <label htmlFor="tierlist-description">Description</label>
         <input
           type="text"
           name="description"
-          id="tierlist-desc"
+          id="tierlist-description"
           className={styles.input}
         />
         <h2>Tiers:</h2>
         {tiers.map((tier, i) => (
           <div key={i.toString()} className={styles.tier}>
-            <label htmlFor={i.toString()}>{`Tier ${i + 1}`}</label>
+            <label htmlFor={`tier-name--${i + 1}`}>{`Tier ${i + 1}`}</label>
             <input
               type="text"
-              id={i.toString()}
+              id={`tier-name--${i + 1}`}
               value={tier.name}
               className={styles.input}
               onChange={(e) => handleChangeTier(e, i, "name")}
             />
-            <label htmlFor={"max" + i.toString()}>{"Note max: "}</label>
+            <label htmlFor={`tier-max--${i + 1}`}>{"Note max: "}</label>
             <input
               type="number"
-              id={"max" + i.toString()}
+              id={`tier-max--${i + 1}`}
               value={tier.max}
               className={styles.input}
               onChange={(e) => handleChangeTier(e, i, "max")}
@@ -117,28 +122,34 @@ function NewTierlistForm({}) {
         <h2>Critères:</h2>
         {criterias.map((criteria, i) => (
           <div className={styles.criteria} key={i.toString()}>
-            <label htmlFor={i.toString()}>{`Critère n°${i + 1}`}</label>
+            <label htmlFor={`criteria-name--${i + 1}`}>{`Critère n°${
+              i + 1
+            }`}</label>
             <input
               type="text"
-              id={i.toString()}
+              id={`criteria-name--${i + 1}`}
               value={criteria.name}
               className={styles.input}
               onChange={(e) => handleChangeCriteria(e, i, "name")}
             />
-            <label htmlFor={"max" + i.toString()}>{"Note max: "}</label>
+            <label htmlFor={`criteria-max-rate--${i + 1}`}>
+              {"Note max: "}
+            </label>
             <input
               type="number"
-              id={"criteria-max-" + i.toString()}
+              id={`criteria-max-rate--${i + 1}`}
               value={criteria.maxRate}
               className={styles.input}
               onChange={(e) => handleChangeCriteria(e, i, "maxRate")}
               min={0}
               max={20}
             />
-            <label htmlFor={i.toString()}>{`Description`}</label>
+            <label
+              htmlFor={`criteria-description--${i + 1}`}
+            >{`Description`}</label>
             <input
               type="text"
-              id={i.toString()}
+              id={`criteria-description--${i + 1}`}
               value={criteria.description}
               className={styles.input}
               onChange={(e) => handleChangeCriteria(e, i, "description")}
