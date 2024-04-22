@@ -1,31 +1,31 @@
 export interface Tierlist {
-    id: string
-    userId: string
-    name: string
-    description?: string
-    criterias: Criteria[]
-    tiers: Tier[]
+  id?: string;
+  userId: string;
+  name: string;
+  description?: string;
+  criterias: Criteria[];
+  tiers: Tier[];
 }
 
 export interface Criteria {
-    name: string
-    maxRate: number
-    description?: string
+  name: string;
+  maxRate: number;
+  description?: string;
 }
 
 export interface Tier {
-    name: string
-    max: number
+  name: string;
+  max: number;
 }
 
 export interface Item {
-    id: string
-    imageUrl: string
-    ratings: Rating[]
-    tiered: boolean
+  id: string;
+  imageUrl: string;
+  ratings: Rating[];
+  tiered: boolean;
 }
 
 export interface Rating {
-    criteriaName: string
-    rate: number
+  criteriaName: string;
+  rate: number;
 }

@@ -1,10 +1,10 @@
-import { Criteria, Tier } from "@/app/lib/definitions";
+import { Criteria, Tier, Tierlist } from "@/app/lib/definitions";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import styles from "@/app/components/NewTierlistForm/index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
-function NewTierlistForm({}) {
+function NewTierlistForm({ userId }: { userId: string }) {
   const [tiers, setTiers] = useState<Tier[]>([
     { name: "S", max: 20 },
     { name: "A", max: 16 },
@@ -19,6 +19,15 @@ function NewTierlistForm({}) {
     { name: "", maxRate: 5, description: "" },
     { name: "", maxRate: 5, description: "" },
   ]);
+
+  const [tierlist, setTierlist] = useState<Tierlist>({
+    userId: userId,
+    name: "",
+    description: "",
+    criterias: [],
+    tiers: [],
+  });
+
   const handleCreateTier = (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setTiers([...tiers, { name: "", max: 0 }]);
@@ -69,6 +78,15 @@ function NewTierlistForm({}) {
     );
   };
 
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: "name" | "description"
+  ) => {
+    let prevTierlist = { ...tierlist };
+    prevTierlist[field] = e.target.value;
+    setTierlist(prevTierlist);
+  };
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Nouvelle Tierlist</h1>
@@ -76,17 +94,20 @@ function NewTierlistForm({}) {
         <label htmlFor="tierlist-name">Nom:</label>
         <input
           type="text"
-          id="tierlist-name--"
+          id="tierlist-name"
           className={styles.input}
+          onChange={(e) => handleChange(e, "name")}
           required
         ></input>
         <label htmlFor="tierlist-description">Description</label>
-        <input
-          type="text"
+        <textarea
           name="description"
           id="tierlist-description"
           className={styles.input}
-        />
+          cols={30}
+          rows={5}
+          onChange={(e) => handleChange(e, "description")}
+        ></textarea>
         <h2>Tiers:</h2>
         {tiers.map((tier, i) => (
           <div key={i.toString()} className={styles.tier}>

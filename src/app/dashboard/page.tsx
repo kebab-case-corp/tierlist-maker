@@ -31,7 +31,7 @@ function Page() {
         Disconnect
       </button>
       <TierlistsList userId={user.uid}></TierlistsList>
-      <NewTierlistForm></NewTierlistForm>
+      <NewTierlistForm userId={user.uid}></NewTierlistForm>
     </div>
   );
 }
