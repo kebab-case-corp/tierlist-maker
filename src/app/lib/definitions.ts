@@ -1,7 +1,9 @@
 export interface Tierlist {
   id?: string;
   userId: string;
+  backgroundImg?: string;
   name: string;
+  createdAt: number;
   description?: string;
   criterias: Criteria[];
   tiers: Tier[];
