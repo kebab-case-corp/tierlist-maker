@@ -1,56 +1,25 @@
-export const tierlists = [
-  {
-    id: "hoi",
-    userId: "aaa",
-    criterias: [
-      { name: "Force", maxRate: 5, description: "" },
-      { name: "Style", maxRate: 5, description: "" },
-      { name: "Technique", maxRate: 5, description: "" },
-      { name: "Impact", maxRate: 5, description: "" },
-    ],
-    tiers: [
-      { name: "S", min: 16 },
-      { name: "A", min: 12 },
-      { name: "B", min: 8 },
-      { name: "C", min: 4 },
-      { name: "D", min: 0 },
-    ],
-    name: "Reborn",
-    items: [
-      {
-        image: `https://medias.spotern.com/spots/w640/67/67512-1532336916.jpg`,
-        ratings: [
-          { criteria: "Force", rate: 0 },
-          { criteria: "Style", rate: 0 },
-          { criteria: "Technique", rate: 0 },
-          { criteria: "Impact", rate: 0 },
-        ],
-        id: "lprrm",
-        totalRating: 0,
-        tier: "D",
-      },
-      {
-        image: `https://static.wikia.nocookie.net/reborn/images/8/8d/Tsuna_2.PNG`,
-        ratings: [
-          { criteria: "Force", rate: 0 },
-          { criteria: "Style", rate: 0 },
-          { criteria: "Technique", rate: 0 },
-          { criteria: "Impact", rate: 0 },
-        ],
-        id: "lpm",
-        totalRating: 15,
-        tier: "D",
-      },
-    ],
-    unratedItems: [
-      {
-        image: `https://static.wikia.nocookie.net/reborn/images/2/27/Lambo_Anime2.png`,
-        id: "lqqqqm",
-      },
-      {
-        image: `https://static.wikia.nocookie.net/reborn/images/d/dc/M_Rokudo.PNG`,
-        id: "ddef",
-      },
-    ],
-  },
-];
+import { collection, doc, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { db } from '../../../firebase-config';
+import { Tierlist } from './definitions';
+
+export const getTierlists = async (userId: string) => {
+	const q = query(
+		collection(db, 'tierlists'),
+		where('userId', '==', userId),
+		orderBy('createdAt', 'desc')
+	);
+	const querySnapshot = await getDocs(q);
+	const tl: Tierlist[] = [];
+	querySnapshot.forEach((doc) => {
+		tl.push({ id: doc.id, ...doc.data() } as Tierlist);
+	});
+	return tl;
+};
+
+export const getTierlist = async (tierlistid: string) => {
+	const docRef = doc(db, 'tierlists', tierlistid);
+	const docSnapshot = await getDoc(docRef);
+	return docSnapshot.exists()
+		? (docSnapshot.data() as Tierlist)
+		: Promise.reject(new Error('Tierlist not found'));
+};

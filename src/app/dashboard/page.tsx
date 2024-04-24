@@ -1,69 +1,56 @@
-"use client";
+'use client';
 
-import { User, onAuthStateChanged, signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { auth } from "../../../firebase-config";
-import TierlistsList from "../components/TierlistsList";
-import styles from "./index.module.css";
-import NewTierlistForm from "../components/NewTierlistForm";
-import { Tierlist } from "../lib/definitions";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../../firebase-config";
+import { User, onAuthStateChanged, signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { auth } from '../../../firebase-config';
+import TierlistsList from '../components/TierlistsList';
+import styles from './index.module.css';
+import NewTierlistForm from '../components/NewTierlistForm';
+import { Tierlist } from '../lib/definitions';
+import { getTierlists } from '../lib/data';
+import { useAuth } from '../lib/hooks';
 
 function Page() {
-  const [alltierlists, setAllTierLists] = useState<Tierlist[]>([]);
-  const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
-  const handleLogoutClick = () => {
-    signOut(auth);
-  };
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-      if (authUser) {
-        setUser(authUser);
-      } else {
-        router.push("/");
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
+	const [tierlists, setTierLists] = useState<Tierlist[]>([]);
+	const user = useAuth();
+	const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchTierLists = async () => {
-      const q = query(
-        collection(db, "tierlists"),
-        where("userId", "==", user?.uid)
-      );
-      const querySnapshot = await getDocs(q);
-      const tl: Tierlist[] = [];
-      querySnapshot.forEach((doc) => {
-        tl.push({ id: doc.id, ...doc.data() } as Tierlist);
-      });
-      setAllTierLists(tl.sort((a, b) => b.createdAt - a.createdAt));
-    };
-    if (user) {
-      fetchTierLists();
-    }
-  }, [user]);
+	const handleLogoutClick = () => {
+		signOut(auth);
+	};
 
-  if (!user) return <div>Loading</div>;
-  return (
-    <div className={styles.wrapper}>
-      <button className={styles.btn} onClick={handleLogoutClick}>
-        Disconnect
-      </button>
-      {alltierlists && (
-        <>
-          <TierlistsList tierlists={alltierlists}></TierlistsList>
-          <NewTierlistForm
-            userId={user.uid}
-            setAllTierlists={setAllTierLists}
-          ></NewTierlistForm>
-        </>
-      )}
-    </div>
-  );
+	useEffect(() => {
+		const fetchTierlists = async () => {
+			setLoading(true);
+			try {
+				if (user) {
+					const fetchedTierlists = await getTierlists(user.uid);
+					setTierLists(fetchedTierlists);
+				}
+			} catch (error) {
+				console.error('Error fetching tierlists: ' + error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchTierlists();
+	}, [user]);
+
+	if (!user || loading) return <div>Loading</div>;
+	return (
+		<div className={styles.wrapper}>
+			<button className={styles.btn} onClick={handleLogoutClick}>
+				Disconnect
+			</button>
+			{tierlists && (
+				<>
+					<TierlistsList tierlists={tierlists}></TierlistsList>
+					<NewTierlistForm userId={user.uid} setAllTierlists={setTierLists}></NewTierlistForm>
+				</>
+			)}
+		</div>
+	);
 }
 
 export default Page;
