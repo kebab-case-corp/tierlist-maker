@@ -18,6 +18,7 @@ function Page() {
     const { tierlistid } = useParams<{ tierlistid: string }>();
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState<Item[]>([]);
+    const [ratingItem, setRatingItem] = useState<Item | null>(null);
 
     useEffect(() => {
         const fetchTierlist = async () => {
@@ -47,6 +48,7 @@ function Page() {
         };
         fetchTierlist();
     }, [tierlistid]);
+    console.log(ratingItem);
     console.log(items);
     useEffect(() => {
         if (tierlist?.userId !== user?.uid) {
@@ -59,10 +61,24 @@ function Page() {
             <div className={styles.container}>
                 <h1>{tierlist.name}</h1>
                 <div className={styles.wrapper}>
-                    <TierList tierlist={tierlist} />
-                    <RatingPanel item={null} criterias={tierlist.criterias}></RatingPanel>
+                    <TierList
+                        tierlist={tierlist}
+                        items={items.filter((item) => item.tiered === true)}
+                    />
+                    <RatingPanel
+                        item={ratingItem}
+                        criterias={tierlist.criterias}
+                        setRatingItem={setRatingItem}
+                        tierlistId={tierlistid}
+                    ></RatingPanel>
                 </div>
-                <UnratedBox unratedItems={items} tierlistid={tierlistid}></UnratedBox>
+                <UnratedBox
+                    unratedItems={items.filter((item) => item.tiered === false)}
+                    tierlistid={tierlistid}
+                    criterias={tierlist.criterias}
+                    setItems={setItems}
+                    setRatingItem={setRatingItem}
+                ></UnratedBox>
             </div>
         )
     );

@@ -5,11 +5,22 @@ import { db, storage } from "../../../../firebase-config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Resizer from "react-image-file-resizer";
 import { addDoc, collection } from "firebase/firestore";
-import { Item } from "@/app/lib/definitions";
+import { Criteria, Item, Rating } from "@/app/lib/definitions";
 import styles from "./index.module.css";
 
-function UnratedBox({ tierlistid, unratedItems }: { tierlistid: string; unratedItems: Item[] }) {
-    const [url, setUrl] = useState<string>("");
+function UnratedBox({
+    tierlistid,
+    unratedItems,
+    criterias,
+    setItems,
+    setRatingItem,
+}: {
+    tierlistid: string;
+    unratedItems: Item[];
+    criterias: Criteria[];
+    setItems: React.Dispatch<React.SetStateAction<Item[]>>;
+    setRatingItem: React.Dispatch<React.SetStateAction<Item | null>>;
+}) {
     const resizeFile = (file: File, extension: string) =>
         new Promise((resolve) => {
             Resizer.imageFileResizer(
@@ -17,7 +28,7 @@ function UnratedBox({ tierlistid, unratedItems }: { tierlistid: string; unratedI
                 300,
                 300,
                 extension,
-                100,
+                80,
                 0,
                 (uri) => {
                     resolve(uri);
@@ -32,18 +43,30 @@ function UnratedBox({ tierlistid, unratedItems }: { tierlistid: string; unratedI
         const fileName = file.name.split(".");
         const extension = fileName[fileName.length - 1];
         if (extension.match(/^(jpg|png|jpeg|webp)$/)) {
-            console.log(file);
+            const initRating: Rating[] = [];
+            criterias.forEach((criteria) => {
+                initRating.push({ criteriaName: criteria.name, rate: 0 });
+            });
             const newImage = await resizeFile(file, extension);
             const fileRef = ref(storage, `tierlist/${Date.now() + file.name}`);
             await uploadBytes(fileRef, newImage as File);
             const uploadedUrl = await getDownloadURL(fileRef);
-            setUrl(uploadedUrl);
             try {
                 const docRef = collection(db, "tierlists", tierlistid, "items");
-                const docSnapshot = addDoc(docRef, {
+                const docSnapshot = await addDoc(docRef, {
                     imageUrl: uploadedUrl,
                     tiered: false,
+                    ratings: initRating,
                 } as Item);
+                setItems((prevItems) => [
+                    ...prevItems,
+                    {
+                        imageUrl: uploadedUrl,
+                        tiered: false,
+                        ratings: initRating,
+                        id: docSnapshot.id,
+                    },
+                ]);
                 console.log(docSnapshot);
             } catch (err) {
                 console.error(err);
@@ -64,6 +87,9 @@ function UnratedBox({ tierlistid, unratedItems }: { tierlistid: string; unratedI
                             alt=""
                             className={styles.img}
                             key={unratedItem.id}
+                            onClick={() => {
+                                setRatingItem({ ...unratedItem });
+                            }}
                         ></img>
                     ))}
             </div>

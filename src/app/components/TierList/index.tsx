@@ -1,33 +1,43 @@
-'use client';
+"use client";
 
-import React from 'react';
-import styles from '@/app/components/TierList/index.module.css';
-import { Tierlist } from '@/app/lib/definitions';
+import React, { useEffect } from "react";
+import styles from "@/app/components/TierList/index.module.css";
+import { Item, Rating, Tierlist } from "@/app/lib/definitions";
 
-function TierList({ tierlist }: { tierlist: Tierlist }) {
-	// const addToTier = (name: string) => {
-	// 	const result = tierlists[0].items.filter((item) => item.tier === name);
-	// 	console.log(result);
-	// 	return result;
-	// };
-	return (
-		<div className={styles.tierlist}>
-			{tierlist.tiers.map((tier) => (
-				<div key={tier.name} className={styles.tier}>
-					<div className={styles['tier-name']}>
-						<p>{tier.name}</p>
-					</div>
-					<div className={styles['items-wrapper']}>
-						{/* {addToTier(tier.name).map((item) => (
-							<div className={styles.item} key={item.id}>
-								<img src={item.image} className={styles.img} width={100} height={100}></img>
-							</div>
-						))} */}
-					</div>
-				</div>
-			))}
-		</div>
-	);
+function TierList({ tierlist, items }: { tierlist: Tierlist; items: Item[] }) {
+    const calcTotalRate = (ratings: Rating[]): number => {
+        const result = ratings.reduce((acc, total) => (acc = total.rate + acc), 0);
+        return result;
+    };
+
+    const addToTier = () => {
+        const tiers = tierlist.tiers.sort((a, b) => a.max - b.max);
+        const tieredItem = items.map((item) => {
+            const totalRating = calcTotalRate(item.ratings);
+            const tier = tiers.find((tier) => totalRating <= tier.max);
+            return { ...item, tier: tier?.name };
+        });
+        return tieredItem;
+    };
+    console.log(addToTier());
+
+    useEffect(() => {
+        items.forEach((item) => {});
+    });
+    return (
+        <div className={styles.tierlist}>
+            {tierlist.tiers
+                .sort((a, b) => b.max - a.max)
+                .map((tier) => (
+                    <div key={tier.name} className={styles.tier}>
+                        <div className={styles["tier-name"]}>
+                            <p>{tier.name}</p>
+                        </div>
+                        <div className={styles["items-wrapper"]}></div>
+                    </div>
+                ))}
+        </div>
+    );
 }
 
 export default TierList;
