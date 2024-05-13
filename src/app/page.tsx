@@ -1,58 +1,44 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
-import RatingPanel from "./components/RatingPanel";
-import TierList from "./components/TierList";
-import UnratedBox from "./components/UnratedBox";
-import styles from "@/app/page.module.css";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase-config";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import TierlistsList from "./components/TierlistsList";
+import styles from "./page.module.css";
+import NewTierlistForm from "./components/NewTierlistForm";
+import { getTierlists } from "./lib/data";
+import { useAuth } from "./lib/hooks";
+import { useTierlistsStore } from "./store/tierlists-store";
 
-export default function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-  const handleFormSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => router.push("/dashboard"))
-      .catch((error) => console.error(error));
-  };
-  return (
-    <div className={styles.wrapper}>
-      <h1 className={styles.title}>Login</h1>
-      <form className={styles.form} onSubmit={handleFormSubmit}>
-        <label htmlFor="email" className={styles.label}>
-          Email:{" "}
-        </label>
-        <input
-          type="text"
-          id="email"
-          required
-          onChange={handleEmailChange}
-          value={email}
-          className={styles.input}
-        ></input>
-        <label htmlFor="pass" className={styles.label}>
-          Password:
-        </label>
-        <input
-          type="password"
-          id="pass"
-          required
-          onChange={handlePasswordChange}
-          value={password}
-          className={styles.input}
-        ></input>
-        <input type="submit" value="Sign in" className={styles.submit} />
-      </form>
-    </div>
-  );
+function Page() {
+    const { setTierlists } = useTierlistsStore();
+    const user = useAuth();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchTierlists = async () => {
+            setLoading(true);
+            try {
+                if (user) {
+                    const fetchedTierlists = await getTierlists(user.uid);
+                    setTierlists(fetchedTierlists);
+                }
+            } catch (error) {
+                console.error("Error fetching tierlists: " + error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTierlists();
+    }, [user, setTierlists]);
+
+    if (!user) return <div className={styles.loginstatus}>Non connecté</div>;
+
+    if (loading) return <div>Connecté! Chargement...</div>;
+    return (
+        <div className={styles.wrapper}>
+            <TierlistsList></TierlistsList>
+            <NewTierlistForm userId={user.uid}></NewTierlistForm>
+        </div>
+    );
 }
+
+export default Page;
