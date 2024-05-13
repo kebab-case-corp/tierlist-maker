@@ -1,15 +1,12 @@
 import styles from './index.module.css';
 import Link from 'next/link';
-import { Tierlist } from '@/app/lib/definitions';
+import { useTierlistsStore } from '@/app/store/tierlists-store';
 
-type TierlistsListProps = {
-	tierlists: Tierlist[];
-};
-
-function TierlistsList({ tierlists }: TierlistsListProps) {
+function TierlistsList() {
+	const tierlists = useTierlistsStore((state) => state.tierlists);
 	return (
 		<div className={styles.container}>
-			{tierlists?.map((tierlist) => {
+			{tierlists.map((tierlist) => {
 				const date = new Date(tierlist.createdAt);
 				const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
 				return (

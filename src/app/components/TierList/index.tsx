@@ -1,43 +1,80 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import styles from "@/app/components/TierList/index.module.css";
-import { Item, Rating, Tierlist } from "@/app/lib/definitions";
+import styles from '@/app/components/TierList/index.module.css';
+import { Item, Tier, Tierlist } from '@/app/lib/definitions';
+import { useTierlistStore } from '@/app/store/tierlist-store';
+import { useItemsStore } from '@/app/store/items-store';
+import Image from 'next/image';
+import { calculateItemScore } from '@/app/lib/utils';
 
-function TierList({ tierlist, items }: { tierlist: Tierlist; items: Item[] }) {
-    const calcTotalRate = (ratings: Rating[]): number => {
-        const result = ratings.reduce((acc, total) => (acc = total.rate + acc), 0);
-        return result;
-    };
+function TierList() {
+	const { tierlist } = useTierlistStore((state) => state);
+	const { items, selectedItem, setSelectedItem } = useItemsStore((state) => state);
 
-    const addToTier = () => {
-        const tiers = tierlist.tiers.sort((a, b) => a.max - b.max);
-        const tieredItem = items.map((item) => {
-            const totalRating = calcTotalRate(item.ratings);
-            const tier = tiers.find((tier) => totalRating <= tier.max);
-            return { ...item, tier: tier?.name };
-        });
-        return tieredItem;
-    };
-    console.log(addToTier());
+	const groupedItems = tierlist
+		? groupItemsByTier(
+				items.filter((item) => item.tiered === true),
+				tierlist
+		  )
+		: [];
 
-    useEffect(() => {
-        items.forEach((item) => {});
-    });
-    return (
-        <div className={styles.tierlist}>
-            {tierlist.tiers
-                .sort((a, b) => b.max - a.max)
-                .map((tier) => (
-                    <div key={tier.name} className={styles.tier}>
-                        <div className={styles["tier-name"]}>
-                            <p>{tier.name}</p>
-                        </div>
-                        <div className={styles["items-wrapper"]}></div>
-                    </div>
-                ))}
-        </div>
-    );
+	return (
+		<div className={styles.tierlist}>
+			{Object.entries(groupedItems).map(([tierName, tierItems]) => (
+				<div key={tierName} className={styles.tier}>
+					<h3 className={styles['tier-name']}>{tierName}</h3>
+					<ul className={styles['items-wrapper']}>
+						{tierItems.map((item) => (
+							<li key={item.id} onClick={() => setSelectedItem(item)}>
+								<p>{tierlist && calculateItemScore(item, tierlist?.criterias)}</p>
+								<Image
+									className={`${styles.img} ${selectedItem?.id === item.id && styles.selected}`}
+									src={item.imageUrl}
+									alt=''
+									width={100}
+									height={100}
+									priority={false}
+								/>
+							</li>
+						))}
+					</ul>
+				</div>
+			))}
+		</div>
+	);
 }
 
 export default TierList;
+
+function groupItemsByTier(items: Item[], tierlist: Tierlist): Record<string, Item[]> {
+	const sortedTiers = [...tierlist.tiers].sort((a, b) => a.max - b.max);
+
+	const groupedItems: Record<string, Item[]> = {};
+	sortedTiers.forEach((tier) => {
+		groupedItems[tier.name] = [];
+	});
+
+	items.forEach((item) => {
+		const score = calculateItemScore(item, tierlist.criterias);
+
+		const assignedTier = sortedTiers.find((tier) => score <= tier.max);
+
+		if (assignedTier) {
+			groupedItems[assignedTier.name].push(item);
+		}
+	});
+
+	Object.values(groupedItems).forEach((tierItems) => {
+		tierItems.sort(
+			(a, b) =>
+				calculateItemScore(b, tierlist.criterias) - calculateItemScore(a, tierlist.criterias)
+		);
+	});
+
+	const reversedGroupedItems: Record<string, Item[]> = {};
+	sortedTiers.reverse().forEach((tier) => {
+		reversedGroupedItems[tier.name] = groupedItems[tier.name];
+	});
+
+	return reversedGroupedItems;
+}

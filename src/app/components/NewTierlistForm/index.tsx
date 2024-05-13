@@ -1,18 +1,11 @@
 import { Criteria, Tier, Tierlist } from '@/app/lib/definitions';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import styles from '@/app/components/NewTierlistForm/index.module.css';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../../../../firebase-config';
 import TierlistCriteriasEditor from './criterias-editor';
 import TierlistTiersEditor from './tiers-editor';
+import { addNewTierlist } from '@/app/lib/data';
 
-function NewTierlistForm({
-	userId,
-	setAllTierlists,
-}: {
-	userId: string;
-	setAllTierlists: React.Dispatch<React.SetStateAction<Tierlist[]>>;
-}) {
+function NewTierlistForm({ userId }: { userId: string }) {
 	const [tiers, setTiers] = useState<Tier[]>([
 		{ name: 'S', max: 20 },
 		{ name: 'A', max: 16 },
@@ -53,11 +46,9 @@ function NewTierlistForm({
 		prevTierlist.tiers = tiers;
 		prevTierlist.createdAt = new Date().getTime();
 		try {
-			const tierlistRef = collection(db, 'tierlists');
-			const docRef = await addDoc(tierlistRef, prevTierlist);
+			const docRef = await addNewTierlist(prevTierlist);
 			prevTierlist.id = docRef.id;
 			setTierlist(prevTierlist);
-			setAllTierlists((prev) => [prevTierlist, ...prev]);
 		} catch (error) {
 			console.error(error);
 		}

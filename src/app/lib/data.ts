@@ -1,10 +1,23 @@
-import { collection, doc, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
+import {
+	addDoc,
+	collection,
+	deleteDoc,
+	doc,
+	getDoc,
+	getDocs,
+	orderBy,
+	query,
+	updateDoc,
+	where,
+} from 'firebase/firestore';
 import { db } from '../../../firebase-config';
-import { Tierlist } from './definitions';
+import { Item, Tierlist } from './definitions';
+
+const tierlistsCollectionRef = collection(db, 'tierlists');
 
 export const getTierlists = async (userId: string) => {
 	const q = query(
-		collection(db, 'tierlists'),
+		tierlistsCollectionRef,
 		where('userId', '==', userId),
 		orderBy('createdAt', 'desc')
 	);
@@ -17,9 +30,49 @@ export const getTierlists = async (userId: string) => {
 };
 
 export const getTierlist = async (tierlistid: string) => {
-	const docRef = doc(db, 'tierlists', tierlistid);
+	const docRef = doc(tierlistsCollectionRef, tierlistid);
 	const docSnapshot = await getDoc(docRef);
 	return docSnapshot.exists()
 		? (docSnapshot.data() as Tierlist)
 		: Promise.reject(new Error('Tierlist not found'));
+};
+
+export const addNewTierlist = async (newTierlist: Omit<Tierlist, 'id'>) => {
+	const docRef = await addDoc(tierlistsCollectionRef, newTierlist);
+	return { id: docRef.id, ...newTierlist };
+};
+
+const getItemsCollectionRef = (tierlistid: string) =>
+	collection(db, 'tierlists', tierlistid, 'items');
+
+export const getItemsFromTierlist = async (tierlistid: string) => {
+	const itemsRef = getItemsCollectionRef(tierlistid);
+	const querySnapshot = await getDocs(query(itemsRef));
+	if (querySnapshot.empty) {
+		return Promise.reject(new Error('No items found for this tierlist'));
+	}
+	return querySnapshot.docs.map((doc) => ({
+		id: doc.id,
+		...(doc.data() as Item),
+	}));
+};
+
+export const addNewItem = async (tierlistid: string, newItem: Omit<Item, 'id'>) => {
+	const itemsRef = getItemsCollectionRef(tierlistid);
+	const docRef = await addDoc(itemsRef, newItem);
+	return { id: docRef.id, ...newItem };
+};
+
+export const updateItem = async (
+	tierlistid: string,
+	itemId: string,
+	updatedData: Partial<Item>
+) => {
+	const docRef = doc(getItemsCollectionRef(tierlistid), itemId);
+	await updateDoc(docRef, updatedData);
+};
+
+export const deleteItem = async (tierlistid: string, itemId: string) => {
+	const docRef = doc(getItemsCollectionRef(tierlistid), itemId);
+	await deleteDoc(docRef);
 };
