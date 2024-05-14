@@ -8,6 +8,8 @@
 	max-width: 500px;
 	grid-template-rows: 100px 50px;
 	background-color: rgba(0, 0, 0, 0.4);
+	position: relative;
+	z-index: 20;
 }
 
 .text {
