@@ -9,6 +9,7 @@ import { calculateItemScore } from "@/app/lib/utils";
 import { db, storage } from "../../../../firebase-config";
 import { deleteObject, ref } from "firebase/storage";
 import { collection, deleteDoc, doc } from "firebase/firestore";
+import { error } from "console";
 
 function TierList() {
     const { tierlist } = useTierlistStore((state) => state);
@@ -22,13 +23,15 @@ function TierList() {
         : {};
 
     const handleDeleteImg = (item: Item) => {
-        removeItem(item.id as string);
-        const imageRef = ref(storage, item.imageUrl);
-        deleteObject(imageRef)
-            .then(() => {
-                deleteDoc(doc(collection(db, "tierlists", tierlist?.id, "items"), item.id));
-            })
-            .catch((error) => console.error(error));
+        const itemDocRef = doc(
+            collection(db, "tierlists", tierlist?.id as string, "items"),
+            item.id
+        );
+        const itemStorageRef = ref(storage, item.imageUrl);
+        Promise.allSettled([deleteDoc(itemDocRef), deleteObject(itemStorageRef)]).then(
+            () => removeItem(item.id as string),
+            (error) => console.error(error)
+        );
     };
 
     return (

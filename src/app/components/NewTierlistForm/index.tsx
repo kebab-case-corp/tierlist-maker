@@ -30,6 +30,8 @@ function NewTierlistForm({ userId }: { userId: string }) {
         tiers: tiers,
     });
 
+    const [modal, setModal] = useState(false);
+
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
         field: "name" | "description"
@@ -49,12 +51,11 @@ function NewTierlistForm({ userId }: { userId: string }) {
             const docRef = await addNewTierlist(prevTierlist);
             prevTierlist.id = docRef.id;
             setTierlist(prevTierlist);
+            setModal(false);
         } catch (error) {
             console.error(error);
         }
     };
-
-    const [modal, setModal] = useState(false);
 
     const handleModalClick = () => {
         setModal(true);
