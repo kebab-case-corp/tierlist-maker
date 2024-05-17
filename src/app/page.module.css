@@ -1,0 +1,6 @@
+.container {
+	display: grid;
+	width: 90vw;
+	margin: auto;
+	gap: 1rem;
+}

@@ -30,33 +30,37 @@ function Header() {
 			<Link href={'/'}>Accueil</Link>
 			{user ? (
 				<button className={styles.disconnect} onClick={handleLogoutClick}>
-					Disconnect
+					Se déconnecter
 				</button>
 			) : (
 				<form className={styles.form} onSubmit={handleFormSubmit}>
-					<label htmlFor='email' className={styles.label}>
-						Email:
-					</label>
-					<input
-						type='text'
-						id='email'
-						required
-						onChange={handleEmailChange}
-						value={email}
-						className={styles.input}
-						placeholder='email@exemple.com'></input>
-					<label htmlFor='pass' className={styles.label}>
-						Mot de Passe:
-					</label>
-					<input
-						type='password'
-						id='pass'
-						required
-						onChange={handlePasswordChange}
-						value={password}
-						className={styles.input}
-						placeholder='**********'></input>
-					<input type='submit' value='Sign in' className={styles.submit} />
+					<div className={styles.inputContainer}>
+						<label htmlFor='email' className={styles.label}>
+							Email:
+						</label>
+						<input
+							type='text'
+							id='email'
+							required
+							onChange={handleEmailChange}
+							value={email}
+							className={styles.input}
+							placeholder='email@exemple.com'></input>
+					</div>
+					<div className={styles.inputContainer}>
+						<label htmlFor='pass' className={styles.label}>
+							Mot de Passe:
+						</label>
+						<input
+							type='password'
+							id='pass'
+							required
+							onChange={handlePasswordChange}
+							value={password}
+							className={styles.input}
+							placeholder='********'></input>
+					</div>
+					<input type='submit' value='Se connecter' className={styles.submit} />
 				</form>
 			)}
 		</div>

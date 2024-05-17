@@ -6,7 +6,7 @@ import { collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../firebase-config';
 import { useTierlistStore } from '@/app/store/tierlist-store';
 import { useItemsStore } from '@/app/store/items-store';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Item } from '@/app/lib/definitions';
 import Image from 'next/image';
 import { calculateItemScore } from '@/app/lib/utils';
@@ -20,6 +20,13 @@ function RatingPanel({ tierlistId }: RatingPanelPropsType) {
 	const criterias = useTierlistStore((state) => state.tierlist?.criterias);
 	const prevItemRef = useRef<typeof selectedItem | null>(null);
 	const [hasChanges, setHasChanges] = useState(false);
+	const score = useMemo(() => {
+		if (selectedItem && criterias) {
+			return calculateItemScore(selectedItem, criterias).toFixed(2);
+		}
+		return 0;
+	}, [selectedItem, criterias]);
+
 	const handleClick = () => {
 		try {
 			if (selectedItem) {
@@ -78,9 +85,7 @@ function RatingPanel({ tierlistId }: RatingPanelPropsType) {
 			))}
 
 			<div className={styles.wrapper}>
-				<p className={styles['total-rating']}>
-					{selectedItem && criterias && calculateItemScore(selectedItem, criterias)}
-				</p>
+				<p className={styles['total-rating']}>{score}</p>
 				<button
 					className={styles.button}
 					onClick={handleClick}

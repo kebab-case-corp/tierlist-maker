@@ -1,13 +1,14 @@
 .container {
-    display: grid;
-    gap: 0.5rem;
+	display: grid;
+	gap: 0.5rem;
 }
 
 .wrapper {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 
 .input {
-    cursor: pointer;
+	cursor: pointer;
+	max-width: 500px;
 }

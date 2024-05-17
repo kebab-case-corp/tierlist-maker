@@ -36,3 +36,32 @@ ul {
 	z-index: 0;
 	opacity: 0.5;
 }
+
+input {
+	height: 2.5rem;
+	padding: 0.5rem;
+	color: white;
+	background-color: rgb(55 65 81);
+	border-radius: 0.5rem;
+	border: solid 1px #6b7280;
+	font-size: 1rem;
+	outline: none;
+}
+
+input:focus {
+	border: solid rgb(0, 204, 255) 2px;
+}
+
+textarea {
+	min-height: 3rem;
+	height: 4rem;
+	max-width: 100%;
+	min-width: 100%;
+	padding: 0.5rem;
+	color: white;
+	background-color: rgb(55 65 81);
+	border-radius: 0.5rem;
+	border: solid 1px #6b7280;
+	font-size: 1rem;
+	outline: none;
+}
