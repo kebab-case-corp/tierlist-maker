@@ -1,33 +1,45 @@
 export interface Tierlist {
-    id?: string;
-    userId: string;
-    backgroundImg?: string;
-    name: string;
-    createdAt: number;
-    description?: string;
-    criterias: Criteria[];
-    tiers: Tier[];
+	id: number;
+	name: string;
+	user_id: string;
+	created_at: string;
+	background_image: string | null;
+	description?: string;
+	criterias: Criteria[];
+	items: Item[];
+	tiers: Tier[];
 }
 
 export interface Criteria {
-    name: string;
-    maxRate: number;
-    description?: string;
-}
-
-export interface Tier {
-    name: string;
-    max: number;
+	id: number;
+	name: string;
+	max_score: number;
+	order: number;
 }
 
 export interface Item {
-    id?: string;
-    imageUrl: string;
-    ratings: Rating[];
-    tiered: boolean;
+	id: number;
+	image_url: string;
+	tierlist_id: number;
+	tiered: boolean;
+	scores: Score[];
 }
 
-export interface Rating {
-    criteriaName: string;
-    rate: number;
+export interface Score {
+	id: number;
+	criteria_id: number;
+	item_id: number;
+	score: number;
+}
+
+export interface Tier {
+	id: number;
+	name: string;
+	min_score: number;
+	background_color: string;
+}
+
+export interface User {
+	id: string;
+	email: string;
 }

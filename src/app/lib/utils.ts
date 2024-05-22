@@ -1,22 +1,33 @@
-import { Criteria, Item } from './definitions';
+import FileResizer from 'react-image-file-resizer';
+import { Score } from './definitions';
 
-export function calculateItemScore(item: Item, criterias: Criteria[]): number {
-	if (!item.ratings.length) return 0;
+export const resizeFile = (file: File, width: number, height: number) =>
+	new Promise((resolve, reject) => {
+		try {
+			FileResizer.imageFileResizer(
+				file,
+				width,
+				height,
+				'webp',
+				80,
+				0,
+				(uri) => {
+					resolve(uri);
+				},
+				'file'
+			);
+		} catch (error) {
+			reject(error);
+		}
+	});
 
-	const totalMaxRate = criterias
-		.filter((criteria) => criteria.name.toLowerCase() !== 'bonus')
-		.reduce((acc, criteria) => acc + criteria.maxRate, 0);
-	const normalizationFactor = 20 / totalMaxRate;
+export const calcTotalScore = (scores: Score[]) =>
+	scores.reduce((acc, score) => acc + score.score, 0);
 
-	const nonBonusRatings = item.ratings.filter(
-		(rating) => rating.criteriaName.toLowerCase() !== 'bonus'
-	);
-	const totalNonBonusScore =
-		nonBonusRatings.reduce((total, rating) => total + rating.rate, 0) * normalizationFactor;
-
-	const bonusRating =
-		item.ratings.find((rating) => rating.criteriaName.toLowerCase() === 'bonus')?.rate || 0;
-
-	const score = totalNonBonusScore + bonusRating;
-	return Math.min(Math.max(score, 0), 20);
-}
+export const formatDate = (dateString: string): string => {
+	const date = new Date(dateString);
+	const day = date.getDate().toString().padStart(2, '0');
+	const month = (date.getMonth() + 1).toString().padStart(2, '0');
+	const year = date.getFullYear();
+	return `${day}/${month}/${year}`;
+};

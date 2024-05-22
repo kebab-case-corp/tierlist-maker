@@ -1,11 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	images: {
-		unoptimized: true,
 		remotePatterns: [
 			{
 				protocol: 'https',
-				hostname: 'firebasestorage.googleapis.com',
+				hostname: 'static.wikia.nocookie.net',
+			},
+			{
+				protocol: 'https',
+				hostname: 'raxkttjshtmaljtjtera.supabase.co',
+			},
+			{
+				protocol: 'https',
+				hostname: 'placehold.co',
 			},
 		],
 	},
