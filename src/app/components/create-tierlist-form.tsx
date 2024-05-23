@@ -176,11 +176,11 @@ function CreateTierListForm() {
 										/>
 									</div>
 
+									<TiersEditor tiers={tiers} setTiers={setTiers}></TiersEditor>
+
 									<CriteriasEditor
 										criterias={criterias}
 										setCriterias={setCriterias}></CriteriasEditor>
-
-									<TiersEditor tiers={tiers} setTiers={setTiers}></TiersEditor>
 
 									<div className='mt-4 flex justify-around'>
 										<button type='submit' className='button min-w-32'>
